@@ -3,7 +3,7 @@
     --PvPSuite (http://forum.botoflegends.com/user/76516-pvpsuite/)
 --
 
-local sVersion = '2.71';
+local sVersion = '2.72';
 local rVersion = GetWebResult('raw.githubusercontent.com', '/Nader-Sl/BoLStudio/master/Versions/p_modelChanger.version?no-cache=' .. math.random(1, 25000)); 
 
 if ((rVersion) and (tonumber(rVersion) ~= nil)) then
@@ -21,7 +21,7 @@ end;
 if (not VIP_USER) then
 	print('<font color="#FF1493"><b>[p_modelChanger]</b> </font><font color="#FF0000">Non-VIP Not Supported</font>');
 	return;
-elseif ((string.find(GetGameVersion(), 'Releases/6.3') == nil) and ((string.find(GetGameVersion(), 'Releases/6.4') == nil))) then
+elseif ((string.find(GetGameVersion(), 'Releases/6.5') == nil) and ((string.find(GetGameVersion(), 'Releases/6.4') == nil))) then
 		print('<font color="#FF1493"><b>[p_modelChanger]</b> </font><font color="#FF0000">Game Version Not Supported</font>');
 		return;
 end;
@@ -30,8 +30,8 @@ local skinHeader = nil;
 
 if (string.find(GetGameVersion(), 'Releases/6.4') ~= nil) then
 	skinHeader = 0xFB;
-elseif (string.find(GetGameVersion(), 'Releases/6.3') ~= nil) then
-		skinHeader = 0x43;
+elseif (string.find(GetGameVersion(), 'Releases/6.5') ~= nil) then
+		skinHeader = 0x59;
 end;
 
 local orderedTable = {};
@@ -274,17 +274,17 @@ end;
 
 function OnRecvPacket(sPacket)
   
-  if sPacket.header == 0x58 or sPacket.header == 117 or sPacket.header == 0xAC then return end
+  --if sPacket.header == 0x58 or sPacket.header == 117 or sPacket.header == 0xAC then return end
     if sPacket.size > 5 then
       sPacket.pos = 2;
       local nID = sPacket:DecodeF();
       if nID == myHero.networkID then
-     -- if sPacket.header == 0xFB then
-	-- print(string.format("%02X",sPacket.header));
-		--print(string.format("%02X",sPacket.vTable))
-        --print(DumpPacket(sPacket).data)
-	  
-      --end
+      if sPacket.header == 0x59 then
+      -- print(string.format("%02X",sPacket.header));
+       -- print(string.format("%02X",sPacket.vTable))
+      -- print(DumpPacket(sPacket).data)
+        
+      end
   end
 end
 	if (sPacket.header == skinHeader) then
@@ -467,32 +467,32 @@ function SendModelPacket(mObject, skinnedObject)
 		mP:Hide();
 		RecvPacket(mP);
     
-	elseif (string.find(GetGameVersion(), 'Releases/6.3') ~= nil) then
+	elseif (string.find(GetGameVersion(), 'Releases/6.5') ~= nil) then
 			local mP = CLoLPacket(skinHeader);
       
-			mP.vTable = 0x10329EC;
+			mP.vTable = 0xF5CA0C;
 			mP:EncodeF(myHero.networkID);
-
-      	mP:Encode1(0x00);
-			for I = 1, string.len(mObject) do
+      
+      for I = 1, string.len(mObject) do
 				mP:Encode1(string.byte(string.sub(mObject, I, I)));
 			end;
 
 			for I = 1, (14 - string.len(mObject)) do
 				mP:Encode1(0x00);
 			end;
-
+      
   	mP:Encode2(0x0000);
 		mP:Encode4(0x0000000D);
 		mP:Encode4(0x0000000F);
+    mP:Encode4(0x00000000);
+    mP:Encode2(0x0000);
+    mP:Encode1(0x00);
        
       	if (skinnedObject) then
-          mP:Encode4(0xACACACAC);
+          mP:Encode4(0xECECECEC);
         else
-          mP:Encode4(0xA4A4A4A4);
+          mP:Encode4(0xC1C1C1C1);
         end;
-		mP:Encode4(0x00000000);
-    mP:Encode2(0x0000);
     mP:Hide();
    -- print(string.format("%02X",mP.vTable));
     --print(DumpPacket(mP).data)

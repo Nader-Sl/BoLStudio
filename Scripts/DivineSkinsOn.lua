@@ -3,7 +3,7 @@ function log(msg)
 print("<font color=\"#e88ebc\">[Divine SkinsOn]</font> "..msg)
 end
 
-local sVersion = '1.01';
+local sVersion = '1.02';
 local rVersion = GetWebResult('raw.githubusercontent.com', '/Nader-Sl/BoLStudio/master/Versions/DivineSkinsOn.version?no-cache=' .. math.random(1, 25000));
 
 if ((rVersion) and (tonumber(rVersion) ~= nil)) then
@@ -21,7 +21,7 @@ end;
 if (not VIP_USER) then
 	log("Non-VIP Not Supported");
 	return;
-elseif ((string.find(GetGameVersion(), 'Releases/6.3') == nil) and ((string.find(GetGameVersion(), 'Releases/6.4') == nil))) then
+elseif ((string.find(GetGameVersion(), 'Releases/6.5') == nil) and ((string.find(GetGameVersion(), 'Releases/6.4') == nil))) then
 	log("Game Version Not Supported, an update is required, please be patient and check forums");
 		return;
 end;
@@ -57,27 +57,27 @@ if (string.find(GetGameVersion(), 'Releases/6.4') ~= nil) then
 	skinHPos = 6;
 	header = 0xFB
   --[[["Blitzcrank"]   = {"Classic", "Rusty", "Goalkeeper", "Boom Boom", "Piltover Customs", "Definitely Not", "iBlitzcrank", "Riot", "Chroma Pack: Molten", "Chroma Pack: Cobalt", "Chroma Pack: Gunmetal", "Battle Boss"},]]--
-elseif (string.find(GetGameVersion(), 'Releases/6.3') ~= nil) then
+elseif (string.find(GetGameVersion(), 'Releases/6.5') ~= nil) then
 		skinsPB = {
-			[1] = 0xC2,
-			[10] = 0xB7,
-			[8] = 0x61,
-			[4] = 0x98,
-			[12] = 0x83,
-			[5] = 0x93,
-			[9] = 0xDB,
-			[7] = 0x8D,
-			[3] = 0xB4,
-			[11] = 0x3B,
-			[6] = 0xF1,
-			[2] = 0x3C,
+			[1] = 0xC1,
+			[10] = 0x45,
+			[8] = 0xD9,
+			[4] = 0xBD,
+			[12] = 0xA0,
+			[5] = 0xE7,
+			[9] = 0x17,
+			[7] = 0x62,
+			[3] = 0x34,
+			[11] = 0x21,
+			[6] = 0x4A,
+			[2] = 0x1A,
 		};
-		skinObjectPos = 7;
-		skinHeader = 0x43;
-		dispellHeader = 0x8F;
-		skinH = 0xC2;
-		skinHPos = 31;
-    header = 0x43
+		skinObjectPos = 6;
+		skinHeader = 0x59;
+		dispellHeader = 0x6C;
+		skinH = 0xC1;
+		skinHPos = 37;
+    header = 0x59
 end;
 
 local theMenu = nil;
@@ -305,6 +305,7 @@ function OnRecvPacket(rPacket)
 				elseif (hero.charName == 'Nidalee') then
 						if ((pS1 == 0x6164694E) and (pS2 == 0x4365656C) and (pS3 == 0x756F) and (pS4 == 0x67) and (pS5 == 0x61) and (pS6 == 0x72)) then
 							data.cougarForm = true;
+              --print("couuugar")
 							if (theMenu.champs[hero.charName.."Menu"]['change' .. hero.charName .. 'Skin']) then
 								rPacket:Replace1(skinsPB[theMenu.champs[hero.charName.."Menu"]['selected' .. hero.charName .. 'Skin']], skinHPos);
 								rPacket:Replace1(skinH, skinHPos + 1);
@@ -495,37 +496,38 @@ function SendSkinPacket(mObject, skinPB, networkID)
 	 
 		mP:Hide();
 		RecvPacket(mP);
-	elseif (string.find(GetGameVersion(), 'Releases/6.3') ~= nil) then
+	elseif (string.find(GetGameVersion(), 'Releases/6.5') ~= nil) then
 				local mP = CLoLPacket(header);
       
-			mP.vTable = 0x10329EC;
-			mP:EncodeF(networkID);
-
-      	mP:Encode1(0x00);
-			for I = 1, string.len(mObject) do
+			mP.vTable = 0xF5CA0C;
+			mP:EncodeF(myHero.networkID);
+      
+      for I = 1, string.len(mObject) do
 				mP:Encode1(string.byte(string.sub(mObject, I, I)));
 			end;
 
 			for I = 1, (14 - string.len(mObject)) do
 				mP:Encode1(0x00);
 			end;
-
+      
   	mP:Encode2(0x0000);
 		mP:Encode4(0x0000000D);
 		mP:Encode4(0x0000000F);
+    mP:Encode4(0x00000000);
+    mP:Encode2(0x0000);
+    mP:Encode1(0x00);
        
       	if (not skinPB or skinnedObject) then
-          mP:Encode4(0xACACACAC);
+          mP:Encode4(0xECECECEC);
         else
-          	mP:Encode1(skinPB);
-			for I = 1, 3 do
-				mP:Encode1(0xC2);
-			end;
+          mP:Encode1(skinPB or skinH);
+          for I = 1, 3 do
+            mP:Encode1(skinH);
+          end;
         end;
-		mP:Encode4(0x00000000);
-    mP:Encode2(0x0000);
     mP:Hide();
-
+   -- print(string.format("%02X",mP.vTable));
+    --print(DumpPacket(mP).data)
    RecvPacket(mP);
     end;
 end;

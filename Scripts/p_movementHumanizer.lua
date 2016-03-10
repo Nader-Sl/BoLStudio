@@ -2,7 +2,7 @@
     --Divine (http://forum.botoflegends.com/user/86308-divine/)
     --PvPSuite (http://forum.botoflegends.com/user/76516-pvpsuite/)
 
-local sVersion = '2.41';
+local sVersion = '2.42';
 local rVersion = GetWebResult('raw.githubusercontent.com','/Nader-Sl/BoLStudio/master/Versions/p_movementHumanizer.version?no-cache=' .. math.random(1, 25000));
 
 if ((rVersion) and (tonumber(rVersion) ~= nil)) then
@@ -20,7 +20,7 @@ end;
 if (not VIP_USER) then
 	print('<font color="#FF1493"><b>[p_movementHumanizer]</b> </font><font color="#FF0000">Non-VIP Not Supported</font>');
 	return;
-elseif ((string.find(GetGameVersion(), 'Releases/6.3') == nil) and (string.find(GetGameVersion(), 'Releases/6.4') == nil)) then
+elseif ((string.find(GetGameVersion(), 'Releases/6.5') == nil) and (string.find(GetGameVersion(), 'Releases/6.4') == nil)) then
 	print('<font color="#FF1493"><b>[p_movementHumanizer]</b> </font><font color="#FF0000">Game Version Not Supported</font>');
 	return;
 end;
@@ -38,8 +38,8 @@ local myTotalMovements = 0;
 local myHamsterLastPassedMovementMillis = 0;
 
 
-if (string.find(GetGameVersion(), 'Releases/6.3') ~= nil) then
-	moveHeader = 0xC5;
+if (string.find(GetGameVersion(), 'Releases/6.5') ~= nil) then
+	moveHeader = 0xD9;
 elseif (string.find(GetGameVersion(), 'Releases/6.4') ~= nil) then
 		moveHeader = 0xAA;
 end;
