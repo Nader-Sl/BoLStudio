@@ -3,7 +3,7 @@ function log(msg)
 print("<font color=\"#e88ebc\">[Divine SkinsOn]</font> "..msg)
 end
 
-local sVersion = '1.02';
+local sVersion = '1.03';
 local rVersion = GetWebResult('raw.githubusercontent.com', '/Nader-Sl/BoLStudio/master/Versions/DivineSkinsOn.version?no-cache=' .. math.random(1, 25000));
 
 if ((rVersion) and (tonumber(rVersion) ~= nil)) then
@@ -21,7 +21,7 @@ end;
 if (not VIP_USER) then
 	log("Non-VIP Not Supported");
 	return;
-elseif ((string.find(GetGameVersion(), 'Releases/6.5') == nil) and ((string.find(GetGameVersion(), 'Releases/6.4') == nil))) then
+elseif ((string.find(GetGameVersion(), 'Releases/6.5') == nil) and ((string.find(GetGameVersion(), 'Releases/6.6') == nil))) then
 	log("Game Version Not Supported, an update is required, please be patient and check forums");
 		return;
 end;
@@ -35,27 +35,27 @@ local skinHPos = nil;
 local skinnedObjects = {} --cache non-packet based skin setting for objects to avoid FPS drop (minions and wards)
 local skinSetTime = os.clock()
 
-if (string.find(GetGameVersion(), 'Releases/6.4') ~= nil) then
+if (string.find(GetGameVersion(), 'Releases/6.6') ~= nil) then
 	skinsPB = {
-		[1] = 0xD4,
-		[10] = 0xE9,
-		[8] = 0x2B,
-		[4] = 0x6B,
-		[12] = 0xEB,
+		[1] = 0x77,
+		[10] = 0xB7,
+		[8] = 0xD6,
+		[4] = 0xF6,
+		[12] = 0xB6,
 		[5] = 0x28,
-		[9] =  0xE8,
-		[7] = 0x2A,
-		[3] = 0x6A,
-		[11] = 0xEA,
-		[6] = 0x29,
-		[2] = 0x69,
+		[9] =  0x37,
+		[7] = 0x56,
+		[3] = 0x76,
+		[11] = 0x36,
+		[6] = 0xD7,
+		[2] = 0xF7,
 	};
-	skinObjectPos = 14;
-	skinHeader = 0xFB
-	dispellHeader = 0xD5;
-	skinH = 0x68;
-	skinHPos = 6;
-	header = 0xFB
+	skinObjectPos = 9;
+	skinHeader = 0x142
+	dispellHeader = 0xF4;
+	skinH = 0x77;
+	skinHPos = 38;
+	header = 0x142
   --[[["Blitzcrank"]   = {"Classic", "Rusty", "Goalkeeper", "Boom Boom", "Piltover Customs", "Definitely Not", "iBlitzcrank", "Riot", "Chroma Pack: Molten", "Chroma Pack: Cobalt", "Chroma Pack: Gunmetal", "Battle Boss"},]]--
 elseif (string.find(GetGameVersion(), 'Releases/6.5') ~= nil) then
 		skinsPB = {
@@ -117,7 +117,7 @@ function OnLoad()
       theMenu.wardsS3.selected = 1;
     end
     
-  for i = 1, heroManager.iCount do
+	for i = 1, heroManager.iCount do
       local hero = heroManager:GetHero(i)
       champsData[""..hero.networkID] = {initBall = false,ballCreated = false,ballNetworkID = nil,lastFormSeen = nil,cougarForm = false,spiderForm = false,lastSkin = 0}
       local data = champsData[""..hero.networkID]
@@ -127,7 +127,7 @@ function OnLoad()
       elseif (theMenu.champs[hero.charName.."Menu"]['change' .. hero.charName .. 'Skin']) then
           SendSkinPacket(hero.charName, skinsPB[theMenu.champs[hero.charName.."Menu"]['selected' .. hero.charName .. 'Skin']], hero.networkID);
       end;
-  
+	  
 	if (hero.charName == 'Orianna') then
 		for I = 1, objManager.maxObjects do
 			local tempObject = objManager:getObject(I);
@@ -458,44 +458,43 @@ function InitMenu()
 	theMenu.wardsS2:addParam('change', 'Change Skin', SCRIPT_PARAM_ONOFF, false);
 	theMenu.wardsS2:addParam('selected', 'Selected Skin', SCRIPT_PARAM_LIST, 1,skinMeta.wardsS2);
   
-  theMenu:addSubMenu("Wards Set 3","wardsS3")
+	theMenu:addSubMenu("Wards Set 3","wardsS3")
 	theMenu.wardsS3:addParam('store', 'Save Skin', SCRIPT_PARAM_ONOFF, false);
 	theMenu.wardsS3:addParam('change', 'Change Skin', SCRIPT_PARAM_ONOFF, false);
 	theMenu.wardsS3:addParam('selected', 'Selected Skin', SCRIPT_PARAM_LIST, 1,skinMeta.wardsS3);
 end;
 
 function SendSkinPacket(mObject, skinPB, networkID)
-	if (string.find(GetGameVersion(), 'Releases/6.4') ~= nil) then
-		local mP = CLoLPacket(header);
+	if (string.find(GetGameVersion(), 'Releases/6.6') ~= nil) then
+		 local mP = CLoLPacket(skinHeader);
 
-		mP.vTable = 0xFB2978;
+		mP.vTable = 0xE91EAC
 
 		mP:EncodeF(myHero.networkID);
-		if (not skinPB or skinnedObject) then
-			mP:Encode4(0x97979797);
-		else
-			mP:Encode1(skinPB);
-			for I = 1, 3 do
-				mP:Encode1(skinH);
-			end;
-		end
-		mP:Encode4(0x00000000);
+		mP:Encode2(0x0000);
+		mP:Encode1(0x00);
 		for I = 1, string.len(mObject) do
 			mP:Encode1(string.byte(string.sub(mObject, I, I)));
 		end;
-
-		for I = 1, (14 - string.len(mObject)) do
+		
+		for I = 1, (16 - string.len(mObject)) do
 			mP:Encode1(0x00);
 		end;
-		mP:Encode2(0x0000);
 		mP:Encode4(0x0000000D);
 		mP:Encode4(0x0000000F);
-     
-		mP:Encode1(0x00);
-		mP:Encode2(0x0000);
-	 
-		mP:Hide();
-		RecvPacket(mP);
+		mP:Encode4(0x00000000);
+		if (not skinPB or skinnedObject) then
+			mP:Encode4(0x78787878);
+		else
+			  mP:Encode1(skinPB);
+			  for I = 1, 3 do
+				mP:Encode1(0x77);
+			  end;
+		end
+	    -- print(DumpPacket(mP).data)
+		 mP:Hide();
+		
+		 RecvPacket(mP);
 	elseif (string.find(GetGameVersion(), 'Releases/6.5') ~= nil) then
 				local mP = CLoLPacket(header);
       

@@ -3,7 +3,7 @@
     --PvPSuite (http://forum.botoflegends.com/user/76516-pvpsuite/)
 --
 
-local sVersion = '2.72';
+local sVersion = '2.73';
 local rVersion = GetWebResult('raw.githubusercontent.com', '/Nader-Sl/BoLStudio/master/Versions/p_modelChanger.version?no-cache=' .. math.random(1, 25000)); 
 
 if ((rVersion) and (tonumber(rVersion) ~= nil)) then
@@ -21,15 +21,15 @@ end;
 if (not VIP_USER) then
 	print('<font color="#FF1493"><b>[p_modelChanger]</b> </font><font color="#FF0000">Non-VIP Not Supported</font>');
 	return;
-elseif ((string.find(GetGameVersion(), 'Releases/6.5') == nil) and ((string.find(GetGameVersion(), 'Releases/6.4') == nil))) then
+elseif ((string.find(GetGameVersion(), 'Releases/6.5') == nil) and ((string.find(GetGameVersion(), 'Releases/6.6') == nil))) then
 		print('<font color="#FF1493"><b>[p_modelChanger]</b> </font><font color="#FF0000">Game Version Not Supported</font>');
 		return;
 end;
 
 local skinHeader = nil;
 
-if (string.find(GetGameVersion(), 'Releases/6.4') ~= nil) then
-	skinHeader = 0xFB;
+if (string.find(GetGameVersion(), 'Releases/6.6') ~= nil) then
+	skinHeader = 0x142;
 elseif (string.find(GetGameVersion(), 'Releases/6.5') ~= nil) then
 		skinHeader = 0x59;
 end;
@@ -279,12 +279,12 @@ function OnRecvPacket(sPacket)
       sPacket.pos = 2;
       local nID = sPacket:DecodeF();
       if nID == myHero.networkID then
-      if sPacket.header == 0x59 then
-      -- print(string.format("%02X",sPacket.header));
-       -- print(string.format("%02X",sPacket.vTable))
-      -- print(DumpPacket(sPacket).data)
-        
-      end
+      --if sPacket.header == 0x142 then
+       --print(string.format("%02X",sPacket.header));
+	--	print(string.format("%02X",sPacket.vTable))
+		--print(DumpPacket(sPacket).data)
+     --   
+    -- end
   end
 end
 	if (sPacket.header == skinHeader) then
@@ -437,33 +437,30 @@ end;
 
 function SendModelPacket(mObject, skinnedObject)
   
-	if (string.find(GetGameVersion(), 'Releases/6.4') ~= nil) then
+	if (string.find(GetGameVersion(), 'Releases/6.6') ~= nil) then
 		local mP = CLoLPacket(skinHeader);
 
-		mP.vTable = 0xFB2978;
+		mP.vTable = 0xE91EAC
 
 		mP:EncodeF(myHero.networkID);
-		if (skinnedObject) then
-			mP:Encode4(0x97979797);
-		else
-			mP:Encode4(0x68686868);
-		end
-		mP:Encode4(0x00000000);
+		mP:Encode2(0x0000);
+		mP:Encode1(0x00);
 		for I = 1, string.len(mObject) do
 			mP:Encode1(string.byte(string.sub(mObject, I, I)));
 		end;
-
-		for I = 1, (14 - string.len(mObject)) do
+		
+		for I = 1, (16 - string.len(mObject)) do
 			mP:Encode1(0x00);
 		end;
-		mP:Encode2(0x0000);
 		mP:Encode4(0x0000000D);
 		mP:Encode4(0x0000000F);
-     
-		mP:Encode1(0x00);
-		mP:Encode2(0x0000);
-    
-			 
+		mP:Encode4(0x00000000);
+		if (skinnedObject) then
+			mP:Encode4(0x77777777);
+		else
+			mP:Encode4(0x78787878);
+		end
+	 
 		mP:Hide();
 		RecvPacket(mP);
     
