@@ -2,7 +2,7 @@
     --Divine (http://forum.botoflegends.com/user/86308-divine/)
     --PvPSuite (http://forum.botoflegends.com/user/76516-pvpsuite/)
 
-local sVersion = '2.43';
+local sVersion = '2.44';
 local rVersion = GetWebResult('raw.githubusercontent.com','/Nader-Sl/BoLStudio/master/Versions/p_movementHumanizer.version?no-cache=' .. math.random(1, 25000));
 
 if ((rVersion) and (tonumber(rVersion) ~= nil)) then
@@ -20,7 +20,7 @@ end;
 if (not VIP_USER) then
 	print('<font color="#FF1493"><b>[p_movementHumanizer]</b> </font><font color="#FF0000">Non-VIP Not Supported</font>');
 	return;
-elseif ((string.find(GetGameVersion(), 'Releases/6.5') == nil) and (string.find(GetGameVersion(), 'Releases/6.6') == nil)) then
+elseif ((string.find(GetGameVersion(), 'Releases/6.8') == nil) and (string.find(GetGameVersion(), 'Releases/6.6') == nil)) then
 	print('<font color="#FF1493"><b>[p_movementHumanizer]</b> </font><font color="#FF0000">Game Version Not Supported</font>');
 	return;
 end;
@@ -38,8 +38,8 @@ local myTotalMovements = 0;
 local myHamsterLastPassedMovementMillis = 0;
 
 
-if (string.find(GetGameVersion(), 'Releases/6.5') ~= nil) then
-	moveHeader = 0xD9;
+if (string.find(GetGameVersion(), 'Releases/6.8') ~= nil) then
+	moveHeader = 0x7E;
 elseif (string.find(GetGameVersion(), 'Releases/6.6') ~= nil) then
 		moveHeader = 0x10C;
 end;
@@ -83,7 +83,7 @@ DelayAction(function()
 end, 0.25);
 
 function OnSendPacket(thePacket)
-  if thePacket.header == 0x0C or thePacket.header == 0xFD or thePacket.header == 0xBA then return end
+  if thePacket.header == 0x134 or thePacket.header == 0x91 or thePacket.header == 0x11f then return end
    -- print(string.format("%02X",thePacket.header));
 	if (orbwalkerOK) then
 		if (thePacket.header == moveHeader) then
